@@ -58,9 +58,12 @@ class DetectionPredictor(BasePredictor):
         det = results[idx].boxes  # TODO: make boxes inherit from tensors
         if len(det) == 0:
             return f'{log_string}(no detections), '
+        Results = "Results: " # 多目标计数中
         for c in det.cls.unique():
             n = (det.cls == c).sum()  # detections per class
             log_string += f"{n} {self.model.names[int(c)]}{'s' * (n > 1)}, "
+
+            Results += '\n'+f"{n} {self.model.names[int(c)]}" #  多目标计数中加了一个变量Results
 
         # write
         for d in reversed(det):
@@ -74,8 +77,16 @@ class DetectionPredictor(BasePredictor):
                 label = None if self.args.hide_labels else (name if self.args.hide_conf else f'{name} {conf:.2f}')
                 self.annotator.box_label(d.xyxy.squeeze(), label, color=colors(c, True))
                 stride, names, pt = self.model.stride, self.model.names, self.model.pt
-                ####### COUNTING ########
-                cv2.putText(im0,f"{names[int(c)]}{'s' * (n > 1)}: {n} ", (5,50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 2)
+############################## single object COUNTING ###################################
+                # cv2.putText(im0,f"{names[int(c)]}{'s' * (n > 1)}: {n} ", (5,50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 2)
+
+#############################  多目标计数 ##############################################################
+                # 需用循环的方式显示多行,因为cv2.putText对换行转义符'\n'显示为'?'
+                y0, dy = 50, 40
+                for i, txt in enumerate(Results.split('\n')):
+                    y = y0 + i * dy
+                    cv2.putText(im0, txt, (50, y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 2, 2)
+#######################################################################################################
             if self.args.save_crop:
                 save_one_box(d.xyxy,
                              imc,

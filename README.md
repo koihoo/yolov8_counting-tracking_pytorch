@@ -7,7 +7,7 @@
 
 ### 效果展示
 
-![节点](https://cdn.nlark.com/yuque/0/2023/png/35529404/1680835735502-8fabe78c-9e87-4ec8-b615-c2927eb4eb56.png?x-oss-process=image%2Fresize%2Cw_632%2Climit_0) 
+![节点](https://cdn.nlark.com/yuque/0/2023/png/35529404/1681105627347-fb17e518-a7e4-4ac5-8a9b-9691966d76eb.png?x-oss-process=image%2Fresize%2Cw_636%2Climit_0) 
 
 ### 一、运行环境 
 * ubuntu 18.04
@@ -132,9 +132,27 @@ model.track(
 > 在xx/ultralytics/yolo/v8/predict.py中加入counting的功能代码
 
 ```python\
-# L 78
-####### COUNTING ########
-cv2.putText(im0,f"{names[int(c)]}{'s' * (n > 1)}: {n}", (5,50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 2)
+# L 60
+if len(det) == 0:
+            return f'{log_string}(no detections), '
+        Results = "Results: " # 多目标计数中
+        for c in det.cls.unique():
+            n = (det.cls == c).sum()  # detections per class
+            log_string += f"{n} {self.model.names[int(c)]}{'s' * (n > 1)}, "
+
+            Results += '\n'+f"{n} {self.model.names[int(c)]}" #  多目标计数中加了一个变量Results
+
+# L 80
+############################## single object COUNTING ###################################
+                # cv2.putText(im0,f"{names[int(c)]}{'s' * (n > 1)}: {n} ", (5,50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 2)
+
+#############################  多目标计数 ##############################################################
+                # 需用循环的方式显示多行,因为cv2.putText对换行转义符'\n'显示为'?'
+                y0, dy = 50, 40
+                for i, txt in enumerate(Results.split('\n')):
+                    y = y0 + i * dy
+                    cv2.putText(im0, txt, (50, y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 2, 2)
+#######################################################################################################
 ```
 
 ---
