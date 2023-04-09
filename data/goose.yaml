@@ -1,0 +1,26 @@
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+
+# train: /home/koihoo/yolov8/data/train.txt
+# val: /home/koihoo/yolov8/data/val.txt
+# test: /home/koihoo/yolov8/data/test.txt
+
+
+# path: /home/koihoo/yolov8/data/ImageSets
+# train: # train images (relative to 'path')
+#   - train.txt
+# val: # val images (relative to 'path')
+#   - val.txt
+# test: # test images (optional)
+#   - test.txt
+
+
+
+path: /home/koihoo/ultralytics/data/goose-2241 # dataset root dir
+train: images/train  # train images (relative to 'path')
+val: images/val  # val images (relative to 'path')
+test:  # test images (optional)
+
+# Classes
+nc: 1  # number of classes
+
+names: ['goose']  # class names
